@@ -1,4 +1,4 @@
 http_client
 ===========
 
-http client from cocos2dx 3.0
+use http client code from cocos2dx 3.0  but no bussiess with cocos;
