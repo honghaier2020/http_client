@@ -3,6 +3,7 @@
 
 #include "HttpClient.h"
 #include <tchar.h>
+#include "jansson.h"
 using namespace  network;
 
 class HttpClientTest : public Ref
@@ -21,7 +22,7 @@ public:
 
 void HttpClientTest::post()
 {
-	if(1)
+	if(0)
 	{
 		HttpRequest* request = new HttpRequest();
 		request->setUrl("http://httpbin.org/post");
@@ -38,18 +39,29 @@ void HttpClientTest::post()
 	}
 	else
 	{
+		//	post data to http server
+		json_t* __msg = json_object();
+		json_t* __msg_id = json_integer(/*MSG_ID::MSG_LOGIN*/2);
+		json_t* __msg_context = json_string("context");
+		json_object_set(__msg, "msg_id", __msg_id);
+		json_object_set(__msg, "context", __msg_context);
+
+
 		HttpRequest* request = new HttpRequest();
 		request->setUrl("http://192.168.22.69:3000/");
 		request->setRequestType(HttpRequest::Type::POST);
 		request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
 
 		// write the post data
-		const char* postData = "visitor=cocos2d&TestSuite=Extensions Test/NetworkTest";
+		const char* postData = json_dumps(__msg,0);
 		request->setRequestData(postData, strlen(postData));
 
 		request->setTag("POST test1");
 		HttpClient::getInstance()->send(request);
 		request->release();
+
+		// decref for json object
+		json_decref(__msg_id);
 	}
 
 }
