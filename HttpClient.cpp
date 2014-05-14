@@ -104,8 +104,6 @@ void HttpClient::networkThread()
 {    
     HttpRequest *request = nullptr;
     
-    //auto scheduler = Director::getInstance()->getScheduler();
-    
     while (true) 
     {
         if (s_need_quit)
@@ -210,11 +208,13 @@ void HttpClient::networkThread()
         s_responseQueueMutex.lock();
         s_responseQueue->push_back(response);
         s_responseQueueMutex.unlock();
-        
-        if (nullptr != s_pHttpClient) {
-            //scheduler->performFunctionInCocosThread(CC_CALLBACK_0(HttpClient::dispatchResponseCallbacks, this));
-			dispatchResponseCallbacks();
-        }
+        if(0)
+		{
+			if (nullptr != s_pHttpClient) 
+			{
+				dispatchResponseCallbacks();
+			}
+		}
     }
     
     // cleanup: if worker thread received quit signal, clean up un-completed request queue
@@ -420,6 +420,8 @@ void HttpClient::enableCookies(const char* cookieFile) {
 HttpClient::HttpClient()
 : _timeoutForConnect(30)
 , _timeoutForRead(60)
+,_lastTime(::GetTickCount())
+,_processCount()
 {
 }
 
@@ -444,8 +446,11 @@ bool HttpClient::lazyInitThreadSemphore()
         s_requestQueue = new std::vector<HttpRequest*>();
         s_responseQueue = new std::vector<HttpResponse*>();
         
-        auto t = std::thread(CC_CALLBACK_0(HttpClient::networkThread, this));
-        t.detach();
+        auto t1 = std::thread(CC_CALLBACK_0(HttpClient::networkThread, this));
+        t1.detach();
+
+		auto t2 = std::thread(CC_CALLBACK_0(HttpClient::workerThread, this));
+		t2.detach();
         
         s_need_quit = false;
     }
@@ -481,7 +486,6 @@ void HttpClient::send(HttpRequest* request)
 // Poll and notify main thread if responses exists in queue
 void HttpClient::dispatchResponseCallbacks()
 {
-    // log("CCHttpClient::dispatchResponseCallbacks is running");
     //occurs when cocos thread fires but the network thread has already quited
     if (nullptr == s_responseQueue) {
         return;
@@ -492,6 +496,7 @@ void HttpClient::dispatchResponseCallbacks()
 
     if (!s_responseQueue->empty())
     {
+		++_processCount;
         response = s_responseQueue->at(0);
         s_responseQueue->erase(s_responseQueue->begin());
     }
@@ -511,6 +516,29 @@ void HttpClient::dispatchResponseCallbacks()
         
         response->release();
     }
+}
+
+void HttpClient::workerThread()
+{
+	while (true)
+	{
+		unsigned long __now_time = ::GetTickCount();
+		if (nullptr != s_pHttpClient) 
+		{
+			dispatchResponseCallbacks();
+			int __time_interval = __now_time - _lastTime;
+			if( __time_interval >= 1000)
+			{
+				printf("_processCount = %d per second\n",_processCount);
+				_processCount = 0;
+				_lastTime = __now_time;
+			}
+		}
+		if(0)
+		{
+			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		}
+	}
 }
 
 }

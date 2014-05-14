@@ -97,13 +97,21 @@ private:
      * @return bool
      */
     bool lazyInitThreadSemphore();
+	
+	//	network thread to process the queue of request
     void networkThread();
+
+	//	worker thread to process the queue of response from server
+	void workerThread();
+
     /** Poll function called from main thread to dispatch callbacks when http requests finished **/
     void dispatchResponseCallbacks();
     
 private:
     int _timeoutForConnect;
     int _timeoutForRead;
+	unsigned long _lastTime;
+	int _processCount;
 };
 
 // end of Network group

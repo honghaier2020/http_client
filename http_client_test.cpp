@@ -3,8 +3,12 @@
 
 #include "HttpClient.h"
 #include <tchar.h>
+#include <thread>
+#include <mutex>
 #include "jansson.h"
 using namespace  network;
+
+static std::mutex       s_post_mutex;
 
 class HttpClientTest : public Ref
 {
@@ -12,6 +16,10 @@ public:
 	HttpClientTest() {}
 
 	~HttpClientTest(){}
+
+	void initThread();
+
+	void postThread();
 
 	void post();
 
@@ -39,29 +47,42 @@ void HttpClientTest::post()
 	}
 	else
 	{
-		//	post data to http server
-		json_t* __msg = json_object();
-		json_t* __msg_id = json_integer(/*MSG_ID::MSG_LOGIN*/2);
-		json_t* __msg_context = json_string("context");
-		json_object_set(__msg, "msg_id", __msg_id);
-		json_object_set(__msg, "context", __msg_context);
+		try 
+		{
+			s_post_mutex.lock();
+			//	post data to http server
+			json_t* __msg = json_object();
+			json_t* __msg_id = json_integer(/*MSG_ID::MSG_LOGIN*/2);
+			json_t* __msg_context = json_string("context");
+			json_object_set(__msg, "msg_id", __msg_id);
+			json_object_set(__msg, "context", __msg_context);
 
 
-		HttpRequest* request = new HttpRequest();
-		request->setUrl("http://192.168.22.69:3000/");
-		request->setRequestType(HttpRequest::Type::POST);
-		request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
+			HttpRequest* request = new HttpRequest();
+			request->setUrl("http://192.168.22.69:3000/");
+			request->setRequestType(HttpRequest::Type::POST);
+			request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
 
-		// write the post data
-		const char* postData = json_dumps(__msg,0);
-		request->setRequestData(postData, strlen(postData));
+			// write the post data
+			const char* postData = json_dumps(__msg,0);
+			if(postData)
+			{
+				//	"{'context': 'context', 'msg_id': 2}";
+				request->setRequestData(postData, strlen(postData));
+			}
+			request->setTag("POST test1");
+			HttpClient::getInstance()->send(request);
+			request->release();
 
-		request->setTag("POST test1");
-		HttpClient::getInstance()->send(request);
-		request->release();
-
-		// decref for json object
-		json_decref(__msg_id);
+			// decref for json object
+			json_decref(__msg_id);
+			s_post_mutex.unlock();
+		}
+		catch(std::exception & __exception)
+		{
+			printf("exception : %s\n",__exception.what());
+			s_post_mutex.unlock();
+		}
 	}
 
 }
@@ -101,13 +122,48 @@ void HttpClientTest::onHttpRequestCompleted( network::HttpClient *sender, networ
 	printf("\n");
 }
 
+void HttpClientTest::postThread()
+{
+	while (true)
+	{
+		this->post();
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	}
+}
+
+void HttpClientTest::initThread()
+{
+	const int __max_thread = 1;
+	for(int i = 0; i < __max_thread; ++i)
+	{
+		auto t = std::thread(std::bind(&HttpClientTest::postThread,this));
+		t.detach();
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	}
+}
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	HttpClientTest* __test = new HttpClientTest();
-	__test->post();
+	if(0)
+	{
+		__test->post();
+	}
+	else
+	{
+		__test->initThread();
+	}
+
 	while (true)
 	{
-		::_sleep(1);
+		if(0)
+		{
+			::_sleep(1);
+		}
+		else
+		{
+			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		}
 	}
 	return 0;
 }

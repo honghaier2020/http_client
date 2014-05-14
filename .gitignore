@@ -21,6 +21,7 @@
 *.app
 *.sdf
 *.opensdf
+*.suo
 
 Debug/
 jansson/Default/
