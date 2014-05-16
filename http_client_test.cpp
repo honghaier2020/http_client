@@ -51,6 +51,8 @@ void HttpClientTest::post()
 		{
 			s_post_mutex.lock();
 			//	post data to http server
+			std::string __string_account = "&account=king_lee";
+			std::string __string_msg = "msg=";
 			json_t* __msg = json_object();
 			json_t* __msg_id = json_integer(/*MSG_ID::MSG_LOGIN*/2);
 			json_t* __msg_context = json_string("context");
@@ -60,6 +62,9 @@ void HttpClientTest::post()
 
 			HttpRequest* request = new HttpRequest();
 			request->setUrl("http://192.168.22.69:3000/");
+			std::vector<std::string> __head;
+			__head.push_back("Content-Type: application/json; charset=utf-8");
+			request->setHeaders(__head);
 			request->setRequestType(HttpRequest::Type::POST);
 			request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
 
@@ -67,8 +72,10 @@ void HttpClientTest::post()
 			const char* postData = json_dumps(__msg,0);
 			if(postData)
 			{
-				//	"{'context': 'context', 'msg_id': 2}";
-				request->setRequestData(postData, strlen(postData));
+				//	msg={"context": "context", "msg_id": 2}
+				__string_msg  += postData;
+				__string_msg += __string_account;
+				request->setRequestData(__string_msg.c_str(), __string_msg.length());
 			}
 			request->setTag("POST test1");
 			HttpClient::getInstance()->send(request);
@@ -145,7 +152,7 @@ void HttpClientTest::initThread()
 int _tmain(int argc, _TCHAR* argv[])
 {
 	HttpClientTest* __test = new HttpClientTest();
-	if(0)
+	if(1)
 	{
 		__test->post();
 	}
