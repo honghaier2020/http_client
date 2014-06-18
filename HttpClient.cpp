@@ -449,7 +449,7 @@ bool HttpClient::lazyInitThreadSemphore()
         auto t1 = std::thread(CC_CALLBACK_0(HttpClient::networkThread, this));
         t1.detach();
 
-		auto t2 = std::thread(CC_CALLBACK_0(HttpClient::workerThread, this));
+		auto t2 = std::thread(CC_CALLBACK_0(HttpClient::workerThread, this));       
 		t2.detach();
         
         s_need_quit = false;
@@ -529,7 +529,7 @@ void HttpClient::workerThread()
 			int __time_interval = __now_time - _lastTime;
 			if( __time_interval >= 1000)
 			{
-				printf("_processCount = %d per second\n",_processCount);
+				//	printf("_processCount = %d per second\n",_processCount);
 				_processCount = 0;
 				_lastTime = __now_time;
 			}

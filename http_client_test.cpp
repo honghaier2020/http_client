@@ -20,15 +20,21 @@ public:
 	void initThread();
 
 	void postThread();
+	//	test http_server,http component for login
+	void post1();
 
-	void post();
+	//	test http_server for fate race
+	void post2();
+
+	//	test express component for fate race 
+	void post3();
 
 	//Http Response Callback
 	void onHttpRequestCompleted(network::HttpClient *sender, network::HttpResponse *response);
 
 };
 
-void HttpClientTest::post()
+void HttpClientTest::post1()
 {
 	if(0)
 	{
@@ -61,7 +67,7 @@ void HttpClientTest::post()
 
 
 			HttpRequest* request = new HttpRequest();
-			request->setUrl("http://192.168.22.69:3000/");
+			request->setUrl("http://192.168.22.61:3001/");
 			std::vector<std::string> __head;
 			__head.push_back("Content-Type: application/json; charset=utf-8");
 			request->setHeaders(__head);
@@ -77,7 +83,7 @@ void HttpClientTest::post()
 				__string_msg += __string_account;
 				request->setRequestData(__string_msg.c_str(), __string_msg.length());
 			}
-			request->setTag("POST test1");
+			request->setTag("POST test1\n");
 			HttpClient::getInstance()->send(request);
 			request->release();
 
@@ -91,8 +97,29 @@ void HttpClientTest::post()
 			s_post_mutex.unlock();
 		}
 	}
+}
+
+void HttpClientTest::post2()
+{
+	//	post data to http server
+	std::string __string_msg = "msg_id=3&version_id=1.0.0.0";
+
+	HttpRequest* request = new HttpRequest();
+	request->setUrl("http://192.168.22.61:3000/");
+	request->setRequestType(HttpRequest::Type::POST);
+	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
+
+	request->setRequestData(__string_msg.c_str(), __string_msg.length());
+	request->setTag("POST test2\n");
+	HttpClient::getInstance()->send(request);
+	request->release();
+}
+
+void HttpClientTest::post3()
+{
 
 }
+
 
 void HttpClientTest::onHttpRequestCompleted( network::HttpClient *sender, network::HttpResponse *response )
 {
@@ -104,7 +131,7 @@ void HttpClientTest::onHttpRequestCompleted( network::HttpClient *sender, networ
 	// You can get original request type from: response->request->reqType
 	if (0 != strlen(response->getHttpRequest()->getTag())) 
 	{
-		printf("%s completed", response->getHttpRequest()->getTag());
+		printf("%s completed ", response->getHttpRequest()->getTag());
 	}
 
 	long statusCode = response->getResponseCode();
@@ -121,7 +148,7 @@ void HttpClientTest::onHttpRequestCompleted( network::HttpClient *sender, networ
 
 	// dump data
 	std::vector<char> *buffer = response->getResponseData();
-	printf("Http Test, dump data: ");
+	printf("Http Test, dump data: \n");
 	for (unsigned int i = 0; i < buffer->size(); i++)
 	{
 		printf("%c", (*buffer)[i]);
@@ -133,7 +160,7 @@ void HttpClientTest::postThread()
 {
 	while (true)
 	{
-		this->post();
+		this->post1();
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
 }
@@ -154,7 +181,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	HttpClientTest* __test = new HttpClientTest();
 	if(1)
 	{
-		__test->post();
+		__test->post1();
+		__test->post2();
+		__test->post3();
 	}
 	else
 	{
@@ -163,7 +192,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	while (true)
 	{
-		if(0)
+		if(1)
 		{
 			::_sleep(1);
 		}
