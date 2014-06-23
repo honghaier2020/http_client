@@ -9,6 +9,16 @@
 using namespace  network;
 
 static std::mutex       s_post_mutex;
+#ifndef __CLOUD_BOX
+//#define __CLOUD_BOX
+#endif //__CLOUD_BOX
+
+#ifdef __CLOUD_BOX
+#define HTTP_URL		"http://117.121.32.94:20000/"
+#else
+#define HTTP_URL		"http://192.168.22.61:3000/"
+#endif // __CLOUD_BOX
+
 
 class HttpClientTest : public Ref
 {
@@ -23,10 +33,9 @@ public:
 	//	test http_server,http component for login
 	void post1();
 
-	//	test http_server for fate race
 	void post2();
 
-	//	test express component for fate race 
+	//	test for mail
 	void post3();
 
 	//Http Response Callback
@@ -102,22 +111,72 @@ void HttpClientTest::post1()
 void HttpClientTest::post2()
 {
 	//	post data to http server
-	std::string __string_msg = "msg_id=3&version_id=1.0.0.0";
+	std::string __string_token = "&token=1234567788";
+	std::string __string_msg = "msg=";
+	json_t* __msg = json_object();
+	json_t* __msg_id = json_integer(/*TYPE_MSG_GET_SRV_TIME:*/3);
+	json_t* __flow_id = json_integer(88888888);
+	json_object_set(__msg, "msg_id", __msg_id);
+	json_object_set(__msg, "flowid", __flow_id);
 
 	HttpRequest* request = new HttpRequest();
-	request->setUrl("http://192.168.22.61:3000/");
+	request->setUrl(HTTP_URL);
 	request->setRequestType(HttpRequest::Type::POST);
 	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
 
-	request->setRequestData(__string_msg.c_str(), __string_msg.length());
-	request->setTag("POST test2\n");
+	// write the post data
+	const char* postData = json_dumps(__msg,0);
+	if(postData)
+	{
+		__string_msg  += postData;
+		__string_msg += __string_token;
+		request->setRequestData(__string_msg.c_str(), __string_msg.length());
+	}
+	request->setTag("POST test1\n");
 	HttpClient::getInstance()->send(request);
 	request->release();
+
+	// decref for json object
+	json_decref(__msg_id);
+	json_decref(__flow_id);
 }
 
 void HttpClientTest::post3()
 {
+	//	post data to http server
+	std::string __string_token = "&token=1234567788";
+	std::string __string_msg = "msg=";
+	json_t* __msg = json_object();
+	json_t* __msg_id = json_integer(/*TYPE_MSG_MAIL:*/4);
+	json_t* __msg_title = json_string("title");
+	json_t* __msg_content = json_string("content");
+	json_t* __msg_channel = json_string("qihu360");
+	json_t* __msg_version = json_string("1.1.1.0");
+	json_object_set(__msg, "msg_id", __msg_id);
+	json_object_set(__msg, "title", __msg_title);
+	json_object_set(__msg, "content", __msg_content);
+	json_object_set(__msg, "channel", __msg_channel);
+	json_object_set(__msg, "version", __msg_version);
 
+	HttpRequest* request = new HttpRequest();
+	request->setUrl(HTTP_URL);
+	request->setRequestType(HttpRequest::Type::POST);
+	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
+
+	// write the post data
+	const char* postData = json_dumps(__msg,0);
+	if(postData)
+	{
+		__string_msg  += postData;
+		__string_msg += __string_token;
+		request->setRequestData(__string_msg.c_str(), __string_msg.length());
+	}
+	request->setTag("POST test1\n");
+	HttpClient::getInstance()->send(request);
+	request->release();
+
+	// decref for json object
+	json_decref(__msg_id);
 }
 
 
@@ -181,9 +240,16 @@ int _tmain(int argc, _TCHAR* argv[])
 	HttpClientTest* __test = new HttpClientTest();
 	if(1)
 	{
-		__test->post1();
-		__test->post2();
-		__test->post3();
+		if(0)
+		{
+			__test->post1();
+		}
+		else
+		{
+			__test->post2();
+			__test->post3();
+		}
+
 	}
 	else
 	{
