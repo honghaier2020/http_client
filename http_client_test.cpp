@@ -13,10 +13,18 @@ static std::mutex       s_post_mutex;
 //#define __CLOUD_BOX
 #endif //__CLOUD_BOX
 
+#ifndef __CLOUD_BOX_FORMAL
+#define __CLOUD_BOX_FORMAL
+#endif //__CLOUD_BOX_FORMAL
+
 #ifdef __CLOUD_BOX
-#define HTTP_URL		"http://117.121.32.94:20000/"
+	#ifdef __CLOUD_BOX_FORMAL
+	#define HTTP_URL		"server.wscs.appget.cn:20000/"
+	#else
+	#define HTTP_URL		"http://117.121.32.94:20000/"
+	#endif //__CLOUD_BOX_FORMAL
 #else
-#define HTTP_URL		"http://192.168.22.61:3000/"
+#define HTTP_URL		"http://192.168.22.61:20000/"
 #endif // __CLOUD_BOX
 
 
@@ -37,6 +45,8 @@ public:
 
 	//	test for mail
 	void post3();
+
+	void post4(int __msg_type);
 
 	//Http Response Callback
 	void onHttpRequestCompleted(network::HttpClient *sender, network::HttpResponse *response);
@@ -179,6 +189,39 @@ void HttpClientTest::post3()
 	json_decref(__msg_id);
 }
 
+void HttpClientTest::post4(int __msg_type)
+{
+	//	post data to http server
+	std::string __string_token = "&token=1234567788";
+	std::string __string_msg = "msg=";
+	json_t* __msg = json_object();
+	json_t* __msg_id = json_integer(__msg_type);
+	json_t* __msg_channel = json_string("qihu360");
+	json_t* __msg_version = json_string("1.1.1.0");
+	json_object_set(__msg, "msg_id", __msg_id);
+	json_object_set(__msg, "channel", __msg_channel);
+	json_object_set(__msg, "version", __msg_version);
+
+	HttpRequest* request = new HttpRequest();
+	request->setUrl(HTTP_URL);
+	request->setRequestType(HttpRequest::Type::POST);
+	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
+
+	// write the post data
+	const char* postData = json_dumps(__msg,0);
+	if(postData)
+	{
+		__string_msg  += postData;
+		__string_msg += __string_token;
+		request->setRequestData(__string_msg.c_str(), __string_msg.length());
+	}
+	request->setTag("POST test1\n");
+	HttpClient::getInstance()->send(request);
+	request->release();
+
+	// decref for json object
+	json_decref(__msg_id);
+}
 
 void HttpClientTest::onHttpRequestCompleted( network::HttpClient *sender, network::HttpResponse *response )
 {
@@ -248,6 +291,8 @@ int _tmain(int argc, _TCHAR* argv[])
 		{
 			__test->post2();
 			__test->post3();
+			__test->post4(5);
+			__test->post4(6);
 		}
 
 	}
