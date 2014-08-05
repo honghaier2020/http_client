@@ -48,6 +48,8 @@ public:
 
 	void post4(int __msg_type);
 
+	void post5();
+
 	//Http Response Callback
 	void onHttpRequestCompleted(network::HttpClient *sender, network::HttpResponse *response);
 
@@ -142,7 +144,7 @@ void HttpClientTest::post2()
 		__string_msg += __string_token;
 		request->setRequestData(__string_msg.c_str(), __string_msg.length());
 	}
-	request->setTag("POST test1\n");
+	request->setTag("POST test2\n");
 	HttpClient::getInstance()->send(request);
 	request->release();
 
@@ -181,7 +183,7 @@ void HttpClientTest::post3()
 		__string_msg += __string_token;
 		request->setRequestData(__string_msg.c_str(), __string_msg.length());
 	}
-	request->setTag("POST test1\n");
+	request->setTag("POST test3\n");
 	HttpClient::getInstance()->send(request);
 	request->release();
 
@@ -196,8 +198,44 @@ void HttpClientTest::post4(int __msg_type)
 	std::string __string_msg = "msg=";
 	json_t* __msg = json_object();
 	json_t* __msg_id = json_integer(__msg_type);
-	json_t* __msg_channel = json_string("qihu360");
-	json_t* __msg_version = json_string("1.1.1.0");
+	json_t* __activity_type = json_integer(2);
+	json_t* __msg_channel = json_string("000023");
+	json_t* __msg_version = json_string("1.2.4");
+	json_object_set(__msg, "msg_id", __msg_id);
+	json_object_set(__msg, "activity_type", __activity_type);
+	json_object_set(__msg, "channel", __msg_channel);
+	json_object_set(__msg, "version", __msg_version);
+
+	HttpRequest* request = new HttpRequest();
+	request->setUrl(HTTP_URL);
+	request->setRequestType(HttpRequest::Type::POST);
+	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
+
+	// write the post data
+	const char* postData = json_dumps(__msg,0);
+	if(postData)
+	{
+		__string_msg  += postData;
+		__string_msg += __string_token;
+		request->setRequestData(__string_msg.c_str(), __string_msg.length());
+	}
+	request->setTag("POST test4\n");
+	HttpClient::getInstance()->send(request);
+	request->release();
+
+	// decref for json object
+	json_decref(__msg_id);
+}
+
+void HttpClientTest::post5()
+{
+	//	post data to http server
+	std::string __string_token = "&token=1234567788";
+	std::string __string_msg = "msg=";
+	json_t* __msg = json_object();
+	json_t* __msg_id = json_integer(/*TYPE_GET_NOTICE*/6);
+	json_t* __msg_channel = json_string("000023");
+	json_t* __msg_version = json_string("1.2.4");
 	json_object_set(__msg, "msg_id", __msg_id);
 	json_object_set(__msg, "channel", __msg_channel);
 	json_object_set(__msg, "version", __msg_version);
@@ -215,7 +253,7 @@ void HttpClientTest::post4(int __msg_type)
 		__string_msg += __string_token;
 		request->setRequestData(__string_msg.c_str(), __string_msg.length());
 	}
-	request->setTag("POST test1\n");
+	request->setTag("POST test5\n");
 	HttpClient::getInstance()->send(request);
 	request->release();
 
@@ -292,7 +330,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			__test->post2();
 			__test->post3();
 			__test->post4(5);
-			__test->post4(6);
+			__test->post5();
 		}
 
 	}
