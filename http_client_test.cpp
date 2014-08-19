@@ -50,6 +50,10 @@ public:
 
 	void post5();
 
+	void post6();
+
+	void post7();
+
 	//Http Response Callback
 	void onHttpRequestCompleted(network::HttpClient *sender, network::HttpResponse *response);
 
@@ -160,11 +164,13 @@ void HttpClientTest::post3()
 	std::string __string_msg = "msg=";
 	json_t* __msg = json_object();
 	json_t* __msg_id = json_integer(/*TYPE_MSG_MAIL:*/4);
+	json_t* __flow_id = json_integer(88888888);
 	json_t* __msg_title = json_string("title");
 	json_t* __msg_content = json_string("content");
 	json_t* __msg_channel = json_string("qihu360");
 	json_t* __msg_version = json_string("1.1.1.0");
 	json_object_set(__msg, "msg_id", __msg_id);
+	json_object_set(__msg, "flowid", __flow_id);
 	json_object_set(__msg, "title", __msg_title);
 	json_object_set(__msg, "content", __msg_content);
 	json_object_set(__msg, "channel", __msg_channel);
@@ -198,10 +204,12 @@ void HttpClientTest::post4(int __msg_type)
 	std::string __string_msg = "msg=";
 	json_t* __msg = json_object();
 	json_t* __msg_id = json_integer(__msg_type);
-	json_t* __activity_type = json_integer(2);
+	json_t* __flow_id = json_integer(88888888);
+	json_t* __activity_type = json_integer(4);
 	json_t* __msg_channel = json_string("000023");
-	json_t* __msg_version = json_string("1.2.4");
+	json_t* __msg_version = json_string("1.2.6");
 	json_object_set(__msg, "msg_id", __msg_id);
+	json_object_set(__msg, "flowid", __flow_id);
 	json_object_set(__msg, "activity_type", __activity_type);
 	json_object_set(__msg, "channel", __msg_channel);
 	json_object_set(__msg, "version", __msg_version);
@@ -234,9 +242,11 @@ void HttpClientTest::post5()
 	std::string __string_msg = "msg=";
 	json_t* __msg = json_object();
 	json_t* __msg_id = json_integer(/*TYPE_GET_NOTICE*/6);
+	json_t* __flow_id = json_integer(88888888);
 	json_t* __msg_channel = json_string("000023");
-	json_t* __msg_version = json_string("1.2.4");
+	json_t* __msg_version = json_string("1.2.6");
 	json_object_set(__msg, "msg_id", __msg_id);
+	json_object_set(__msg, "flowid", __flow_id);
 	json_object_set(__msg, "channel", __msg_channel);
 	json_object_set(__msg, "version", __msg_version);
 
@@ -254,6 +264,98 @@ void HttpClientTest::post5()
 		request->setRequestData(__string_msg.c_str(), __string_msg.length());
 	}
 	request->setTag("POST test5\n");
+	HttpClient::getInstance()->send(request);
+	request->release();
+
+	// decref for json object
+	json_decref(__msg_id);
+}
+static int __device_guid = 323456789;
+static int __race_time = 79950;
+void HttpClientTest::post6()
+{
+	//	post data to http server
+	std::string __string_token = "&token=1234567788";
+	std::string __string_msg = "msg=";
+	json_t* __msg = json_object();
+	json_t* __msg_id = json_integer(/*TYPE_UPLOAD_RACE_TIME*/7);
+	json_t* __flow_id = json_integer(88888888);
+	json_t* __msg_channel = json_string("000023");
+	json_t* __msg_version = json_string("1.2.4");
+	json_t* __msg_device_guid = json_integer(__device_guid);
+	json_t* __msg_race_time = json_integer(__race_time);
+	json_t* __msg_car = json_integer(1);
+	json_t* __msg_car_level = json_integer(2);
+	json_t* __msg_driver = json_integer(3);
+	json_t* __msg_driver_level = json_integer(4);
+	json_t* __msg_phone_number = json_string("18510384228");
+	json_t* __msg_championship_id = json_integer(5);
+	json_object_set(__msg, "msg_id", __msg_id);
+	json_object_set(__msg, "flowid", __flow_id);
+	json_object_set(__msg, "channel", __msg_channel);
+	json_object_set(__msg, "version", __msg_version);
+	json_object_set(__msg, "deviceid", __msg_device_guid);
+	json_object_set(__msg, "race_time", __msg_race_time);
+	json_object_set(__msg, "car", __msg_car);
+	json_object_set(__msg, "car_level", __msg_car_level);
+	json_object_set(__msg, "driver", __msg_driver);
+	json_object_set(__msg, "driver_level", __msg_driver_level);
+	json_object_set(__msg, "phone_number", __msg_phone_number);
+	json_object_set(__msg, "championship_id", __msg_championship_id);
+
+	HttpRequest* request = new HttpRequest();
+	request->setUrl(HTTP_URL);
+	request->setRequestType(HttpRequest::Type::POST);
+	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
+
+	// write the post data
+	const char* postData = json_dumps(__msg,0);
+	if(postData)
+	{
+		__string_msg  += postData;
+		__string_msg += __string_token;
+		request->setRequestData(__string_msg.c_str(), __string_msg.length());
+	}
+	request->setTag("POST test6\n");
+	HttpClient::getInstance()->send(request);
+	request->release();
+
+	// decref for json object
+	json_decref(__msg_id);
+}
+
+void HttpClientTest::post7()
+{
+	//	post data to http server
+	std::string __string_token = "&token=1234567788";
+	std::string __string_msg = "msg=";
+	json_t* __msg = json_object();
+	json_t* __msg_id = json_integer(/*TYPE_GET_RACE_RANK*/8);
+	json_t* __flow_id = json_integer(88888888);
+	json_t* __msg_channel = json_string("000023");
+	json_t* __msg_version = json_string("1.2.4");
+	json_t* __msg_device_guid = json_integer(__device_guid);
+	json_t* __msg_championship_id = json_integer(5);
+	json_object_set(__msg, "msg_id", __msg_id);
+	json_object_set(__msg, "flowid", __flow_id);
+	json_object_set(__msg, "channel", __msg_channel);
+	json_object_set(__msg, "version", __msg_version);
+	json_object_set(__msg, "deviceid", __msg_device_guid);
+	json_object_set(__msg, "championship_id", __msg_championship_id);
+	HttpRequest* request = new HttpRequest();
+	request->setUrl(HTTP_URL);
+	request->setRequestType(HttpRequest::Type::POST);
+	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
+
+	// write the post data
+	const char* postData = json_dumps(__msg,0);
+	if(postData)
+	{
+		__string_msg  += postData;
+		__string_msg += __string_token;
+		request->setRequestData(__string_msg.c_str(), __string_msg.length());
+	}
+	request->setTag("POST test7\n");
 	HttpClient::getInstance()->send(request);
 	request->release();
 
@@ -328,9 +430,11 @@ int _tmain(int argc, _TCHAR* argv[])
 		else
 		{
 			__test->post2();
-			__test->post3();
+			//__test->post3();
 			__test->post4(5);
 			__test->post5();
+			__test->post6();
+			__test->post7();
 		}
 
 	}
