@@ -3,6 +3,7 @@
 
 #include "HttpClient.h"
 #include <tchar.h>
+#include <windows.h>
 #include <thread>
 #include <mutex>
 #include "jansson.h"
@@ -27,6 +28,41 @@ static std::mutex       s_post_mutex;
 #define HTTP_URL		"http://192.168.22.61:20000/"
 #endif // __CLOUD_BOX
 
+#ifdef __ALI
+#define HTTP_URL2	"http://115.29.42.238:5000/" 
+#else
+#define HTTP_URL2	"http://192.168.22.61:5000/"
+#endif //__ALI
+
+std::wstring _AnsiToUnicode( const std::string& val )
+{
+	size_t len = 0;
+	len = val.length();
+	int unicodeLen = ::MultiByteToWideChar( CP_ACP, 0, val.c_str(), -1, NULL, 0 ); 
+	wchar_t * unicode; 
+	unicode = new wchar_t[unicodeLen+1]; 
+	memset(unicode,0,(unicodeLen+1)*sizeof(wchar_t)); 
+	::MultiByteToWideChar( CP_ACP, 0, val.c_str(), -1, (wchar_t*)unicode, unicodeLen ); 
+	std::wstring rt; 
+	rt = ( wchar_t* )unicode;
+	delete unicode; 
+	return rt; 
+}
+
+std::string _UnicodeToUTF8( const std::wstring& val )
+{
+	char* element_text;
+	int    text_len;
+	// wide char to multi char
+	text_len = ::WideCharToMultiByte( CP_UTF8, 0, val.c_str(), -1, NULL, 0, NULL, NULL );
+	element_text = new char[text_len + 1];
+	memset( ( void* )element_text, 0, sizeof( char ) * ( text_len + 1 ) );
+	::WideCharToMultiByte( CP_UTF8, 0, val.c_str(), -1, element_text, text_len, NULL, NULL );
+	std::string strText;
+	strText = element_text;
+	delete[] element_text;
+	return strText;
+}
 
 class HttpClientTest : public Ref
 {
@@ -41,6 +77,7 @@ public:
 	//	test http_server,http component for login
 	void post1();
 
+	//	test for faterace
 	void post2();
 
 	//	test for mail
@@ -53,6 +90,9 @@ public:
 	void post6();
 
 	void post7();
+
+	//	test for wanli
+	void test_participle();
 
 	//Http Response Callback
 	void onHttpRequestCompleted(network::HttpClient *sender, network::HttpResponse *response);
@@ -426,14 +466,34 @@ void HttpClientTest::initThread()
 	}
 }
 
+void HttpClientTest::test_participle()
+{
+	//	post data to http server
+	HttpRequest* request = new HttpRequest();
+	std::string __url = HTTP_URL2;
+	__url += "participle";
+	request->setUrl(__url.c_str());
+	request->setRequestType(HttpRequest::Type::POST);
+	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
+
+	// write the post data
+	std::string __str_msg = "content=轻轻的我走了，正如我轻轻的来;我轻轻的招手，作别西天的云彩";
+    __str_msg = _UnicodeToUTF8(_AnsiToUnicode(__str_msg));
+	request->setRequestData((const char*)__str_msg.c_str(), __str_msg.length());
+	request->setTag("POST test_participle\n");
+	HttpClient::getInstance()->send(request);
+	request->release();
+}
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	HttpClientTest* __test = new HttpClientTest();
 	if(1)
 	{
-		if(0)
+		if(1)
 		{
-			__test->post1();
+			__test->test_participle();
+			//__test->post1();
 		}
 		else
 		{
