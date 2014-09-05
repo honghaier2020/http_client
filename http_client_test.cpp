@@ -112,6 +112,14 @@ void HttpClientTest::post1()
 			HttpClient::getInstance()->send(request);
 			request->release();
 
+#if 1
+			json_error_t* __json_error = NULL;
+			json_t* __json_loads = json_loads(postData,JSON_DECODE_ANY,__json_error);
+			json_t* __json_loads_msg_id = json_object_get(__json_loads,"msg_id");
+			json_t* __json_loads_msg_context = json_object_get(__json_loads,"context");
+			json_int_t __json_int_msg_id = json_integer_value(__json_loads_msg_id);
+			const char* __json_string_msg_context = json_string_value(__json_loads_msg_context);
+#endif
 			// decref for json object
 			json_decref(__msg_id);
 			s_post_mutex.unlock();
@@ -205,7 +213,7 @@ void HttpClientTest::post4(int __msg_type)
 	json_t* __msg = json_object();
 	json_t* __msg_id = json_integer(__msg_type);
 	json_t* __flow_id = json_integer(88888888);
-	json_t* __activity_type = json_integer(4);
+	json_t* __activity_type = json_integer(1);
 	json_t* __msg_channel = json_string("000023");
 	json_t* __msg_version = json_string("1.2.6");
 	json_object_set(__msg, "msg_id", __msg_id);
@@ -270,8 +278,8 @@ void HttpClientTest::post5()
 	// decref for json object
 	json_decref(__msg_id);
 }
-static int __device_guid = 323456789;
-static int __race_time = 79950;
+static std::string __device_guid = "6d1dc7bd3f6e38f49685167f83fe29e2";
+static int __race_time = 7120;
 void HttpClientTest::post6()
 {
 	//	post data to http server
@@ -281,15 +289,15 @@ void HttpClientTest::post6()
 	json_t* __msg_id = json_integer(/*TYPE_UPLOAD_RACE_TIME*/7);
 	json_t* __flow_id = json_integer(88888888);
 	json_t* __msg_channel = json_string("000023");
-	json_t* __msg_version = json_string("1.2.4");
-	json_t* __msg_device_guid = json_integer(__device_guid);
+	json_t* __msg_version = json_string("1.2.6");
+	json_t* __msg_device_guid = json_string(__device_guid.c_str());
 	json_t* __msg_race_time = json_integer(__race_time);
 	json_t* __msg_car = json_integer(1);
 	json_t* __msg_car_level = json_integer(2);
 	json_t* __msg_driver = json_integer(3);
 	json_t* __msg_driver_level = json_integer(4);
 	json_t* __msg_phone_number = json_string("18510384228");
-	json_t* __msg_championship_id = json_integer(5);
+	json_t* __msg_championship_id = json_integer(1);
 	json_object_set(__msg, "msg_id", __msg_id);
 	json_object_set(__msg, "flowid", __flow_id);
 	json_object_set(__msg, "channel", __msg_channel);
@@ -333,9 +341,9 @@ void HttpClientTest::post7()
 	json_t* __msg_id = json_integer(/*TYPE_GET_RACE_RANK*/8);
 	json_t* __flow_id = json_integer(88888888);
 	json_t* __msg_channel = json_string("000023");
-	json_t* __msg_version = json_string("1.2.4");
-	json_t* __msg_device_guid = json_integer(__device_guid);
-	json_t* __msg_championship_id = json_integer(5);
+	json_t* __msg_version = json_string("1.2.6");
+	json_t* __msg_device_guid = json_string(__device_guid.c_str());
+	json_t* __msg_championship_id = json_integer(1);
 	json_object_set(__msg, "msg_id", __msg_id);
 	json_object_set(__msg, "flowid", __flow_id);
 	json_object_set(__msg, "channel", __msg_channel);
@@ -432,7 +440,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			__test->post2();
 			//__test->post3();
 			__test->post4(5);
-			__test->post5();
+			//__test->post5();
 			__test->post6();
 			__test->post7();
 		}
