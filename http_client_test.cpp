@@ -11,7 +11,7 @@ using namespace  network;
 
 static std::mutex       s_post_mutex;
 #ifndef __CLOUD_BOX
-#define __CLOUD_BOX
+//#define __CLOUD_BOX
 #endif //__CLOUD_BOX
 
 #ifndef __CLOUD_BOX_FORMAL
@@ -21,9 +21,9 @@ static std::mutex       s_post_mutex;
 #ifdef __CLOUD_BOX
 	#ifdef __CLOUD_BOX_FORMAL
 	#define HTTP_URL		"server.wscs.appget.cn:20000/"
+	//#define HTTP_URL		"server.wwcs.appget.cn:20100/"
 	#else
 	#define HTTP_URL		"http://117.121.32.94:20000/"
-	//#define HTTP_URL		"http://211.151.21.53:20000/"
 	//#define HTTP_URL		"http://61.91.14.68:20000/"	
 	#endif //__CLOUD_BOX_FORMAL
 #else
@@ -42,9 +42,9 @@ static std::mutex       s_post_mutex;
 #endif //__ALI
 
 
-//#define HTTP_URL3   "http://192.168.22.61:20003/"
+#define HTTP_URL3   "http://192.168.22.66:20003/"
 //#define HTTP_URL3   "http://117.121.32.94:20003/"
-#define HTTP_URL3   "http://61.91.14.68:20003/"
+//#define HTTP_URL3   "http://61.91.14.68:20003/"
 
 std::wstring _AnsiToUnicode( const std::string& val )
 {
@@ -94,7 +94,7 @@ public:
 	//	test for mail
 	void post4();
 
-	void post5(int __msg_type);
+	void post5();
 
 	void post6();
 
@@ -116,20 +116,58 @@ public:
 
 	void post19();
 
+	void post20();
+
+	void post21();
+
+	void post22();
+
+	void post23();
+
+	void post24();
+
+	void post25();
+
+	void post26();
+
+	void post27();
+
+	void post28();
+
+	void post29();
+
 	//	test for wanli
 	void test_participle();
 
 	void test_voice_query(const char* __query);
 
+	void test_voice_query_f_wechat(const char* __query);
+
 	void test_set_colour();
 
+	void test_get_colour();
+
+	void test_get_energy();
+
+	void test_get_support_question();
+
+	void test_give_away_bless();
+
+	void test_get_bless();
+
 	void test_modify_info();
+
+	void test_modify_info_4_wechat();
 
 	void test_feedback();
 
 	void test_get_user_info();
 
+	void test_set_device_token();
+
 	void test_contracts();
+
+	void test_attentions();
 
 	void test_compass();
 
@@ -140,6 +178,20 @@ public:
 	void test_prediction();
 
 	void test_user_query();
+
+	void test_user_query_4_wechat();
+
+	void test_add_bless();
+
+	void test_reg_4_wechat();
+
+	void test_push_4_index();
+
+	void test_push_4_friend();
+
+	void test_push_4_login();
+
+	void test_get_luck();
 
 	void test_express_register();
 
@@ -271,7 +323,7 @@ void HttpClientTest::post4()
 	json_t* __msg_title = json_string("title");
 	json_t* __msg_content = json_string("content");
 	json_t* __msg_channel = json_string("qihu360");
-	json_t* __msg_version = json_string("1.1.1.0");
+	json_t* __msg_version = json_string("1.1.0");
 	json_object_set(__msg, "msg_id", __msg_id);
 	json_object_set(__msg, "flowid", __flow_id);
 	json_object_set(__msg, "title", __msg_title);
@@ -300,22 +352,27 @@ void HttpClientTest::post4()
 	json_decref(__msg_id);
 }
 
-void HttpClientTest::post5(int __msg_type)
+static std::string __device_guid = "043ae1a1-612b-14bf-8000-19c9000018c9-31";
+static int __race_time = 99745;
+void HttpClientTest::post5()
 {
 	//	post data to http server
 	std::string __string_token = "&token=1234567788";
 	std::string __string_msg = "msg=";
 	json_t* __msg = json_object();
-	json_t* __msg_id = json_integer(__msg_type);
+	json_t* __msg_id = json_integer(/*TYPE_GET_ACTIVITY*/5);
 	json_t* __flow_id = json_integer(88888888);
+	json_t* __msg_device_guid = json_string(__device_guid.c_str());
 	json_t* __activity_type = json_integer(3);
 	json_t* __msg_channel = json_string("000023");
-	json_t* __msg_version = json_string("1.3.0");
+	json_t* __msg_version = json_string("1.0.0");
 	json_object_set(__msg, "msg_id", __msg_id);
 	json_object_set(__msg, "flowid", __flow_id);
 	json_object_set(__msg, "activity_type", __activity_type);
 	json_object_set(__msg, "channel", __msg_channel);
 	json_object_set(__msg, "version", __msg_version);
+	json_object_set(__msg, "player_guid", __msg_device_guid);
+	json_object_set(__msg, "deviceid", __msg_device_guid);
 
 	HttpRequest* request = new HttpRequest();
 	request->setUrl(HTTP_URL);
@@ -373,8 +430,7 @@ void HttpClientTest::post6()
 	// decref for json object
 	json_decref(__msg_id);
 }
-static std::string __device_guid = "6d1dc7bd3f6e38f49685167f83fe29e2lee";
-static int __race_time = 99745;
+
 void HttpClientTest::post7()
 {
 	//	post data to http server
@@ -466,6 +522,43 @@ void HttpClientTest::post8()
 	json_decref(__msg_id);
 }
 
+void HttpClientTest::post9()
+{
+	//	post data to http server
+	std::string __string_token = "&token=1234567788";
+	std::string __string_msg = "msg=";
+	json_t* __msg = json_object();
+	json_t* __msg_id = json_integer(/*TYPE_PAY_FOR_FLY_FLOW*/14);
+	json_t* __flow_id = json_integer(88888888);
+	json_t* __msg_channel = json_string("000023");
+	json_t* __msg_version = json_string("1.2.8");
+	json_t* __orderid = json_string("222222");
+	json_object_set(__msg, "msg_id", __msg_id);
+	json_object_set(__msg, "flowid", __flow_id);
+	json_object_set(__msg, "channel", __msg_channel);
+	json_object_set(__msg, "version", __msg_version);
+	json_object_set(__msg, "orderid", __orderid);
+	HttpRequest* request = new HttpRequest();
+	request->setUrl(HTTP_URL);
+	request->setRequestType(HttpRequest::Type::POST);
+	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
+
+	// write the post data
+	const char* postData = json_dumps(__msg,0);
+	if(postData)
+	{
+		__string_msg  += postData;
+		__string_msg += __string_token;
+		request->setRequestData(__string_msg.c_str(), __string_msg.length());
+	}
+	request->setTag("POST test8\n");
+	HttpClient::getInstance()->send(request);
+	request->release();
+
+	// decref for json object
+	json_decref(__msg_id);
+}
+
 void HttpClientTest::post13()
 {
 	//	post data to http server
@@ -505,43 +598,6 @@ void HttpClientTest::post13()
 	json_decref(__msg_id);
 }
 
-void HttpClientTest::post9()
-{
-	//	post data to http server
-	std::string __string_token = "&token=1234567788";
-	std::string __string_msg = "msg=";
-	json_t* __msg = json_object();
-	json_t* __msg_id = json_integer(/*TYPE_PAY_FOR_FLY_FLOW*/14);
-	json_t* __flow_id = json_integer(88888888);
-	json_t* __msg_channel = json_string("000023");
-	json_t* __msg_version = json_string("1.2.8");
-	json_t* __orderid = json_string("222222");
-	json_object_set(__msg, "msg_id", __msg_id);
-	json_object_set(__msg, "flowid", __flow_id);
-	json_object_set(__msg, "channel", __msg_channel);
-	json_object_set(__msg, "version", __msg_version);
-	json_object_set(__msg, "orderid", __orderid);
-	HttpRequest* request = new HttpRequest();
-	request->setUrl(HTTP_URL);
-	request->setRequestType(HttpRequest::Type::POST);
-	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
-
-	// write the post data
-	const char* postData = json_dumps(__msg,0);
-	if(postData)
-	{
-		__string_msg  += postData;
-		__string_msg += __string_token;
-		request->setRequestData(__string_msg.c_str(), __string_msg.length());
-	}
-	request->setTag("POST test8\n");
-	HttpClient::getInstance()->send(request);
-	request->release();
-
-	// decref for json object
-	json_decref(__msg_id);
-}
-
 void HttpClientTest::post15()
 {
 	//	post data to http server
@@ -551,14 +607,14 @@ void HttpClientTest::post15()
 	json_t* __msg_id = json_integer(/*TYPE_UPLOAD_RACE_TIME_FOR_RUNNING_MAN*/15);
 	json_t* __flow_id = json_integer(88888888);
 	json_t* __msg_channel = json_string("000023");
-	json_t* __msg_version = json_string("1.3.0");
+	json_t* __msg_version = json_string("2.0.0");
 	json_t* __msg_device_guid = json_string(__device_guid.c_str());
-	json_t* __msg_boss_rank = json_integer(3);
+	json_t* __msg_boss_rank = json_integer(4);
 	json_t* __msg_mine_rank = json_integer(1);
 	json_t* __msg_phone_number = json_string("18510384228");
 	json_t* __msg_is_increase_level = json_string("true");
 	json_t* __msg_is_add_score = json_string("false");
-	json_t* __msg_distance_ahead_2nd = json_string("1000");
+	json_t* __msg_distance_ahead_2nd = json_string("100000");
 	json_object_set(__msg, "msg_id", __msg_id);
 	json_object_set(__msg, "flowid", __flow_id);
 	json_object_set(__msg, "channel", __msg_channel);
@@ -602,7 +658,7 @@ void HttpClientTest::post16()
 	json_t* __msg_id = json_integer(/*TYPE_GET_RIVAL*/16);
 	json_t* __flow_id = json_integer(88888888);
 	json_t* __msg_channel = json_string("000023");
-	json_t* __msg_version = json_string("1.3.0");
+	json_t* __msg_version = json_string("2.2.0");
 	json_t* __msg_device_guid = json_string(__device_guid.c_str());
 	json_t* __msg_boss_res = json_string("car_370z_s");
 	json_t* __msg_boss_id = json_string("1");
@@ -644,7 +700,7 @@ void HttpClientTest::post17()
 	json_t* __msg_id = json_integer(/*TYPE_GET_RACE_RANK_FOR_RUNNING_MAN*/17);
 	json_t* __flow_id = json_integer(88888888);
 	json_t* __msg_channel = json_string("000023");
-	json_t* __msg_version = json_string("1.3.0");
+	json_t* __msg_version = json_string("2.1.0");
 	json_t* __msg_device_guid = json_string(__device_guid.c_str());
 	json_object_set(__msg, "msg_id", __msg_id);
 	json_object_set(__msg, "flowid", __flow_id);
@@ -682,7 +738,7 @@ void HttpClientTest::post18()
 	json_t* __msg_id = json_integer(/*TYPE_GET_AWARD_FOR_RUNNING_MAN*/18);
 	json_t* __flow_id = json_integer(88888888);
 	json_t* __msg_channel = json_string("000023");
-	json_t* __msg_version = json_string("1.3.0");
+	json_t* __msg_version = json_string("2.0.0");
 	json_t* __msg_device_guid = json_string(__device_guid.c_str());
 	json_object_set(__msg, "msg_id", __msg_id);
 	json_object_set(__msg, "flowid", __flow_id);
@@ -744,6 +800,444 @@ void HttpClientTest::post19()
 		request->setRequestData(__string_msg.c_str(), __string_msg.length());
 	}
 	request->setTag("POST test19\n");
+	HttpClient::getInstance()->send(request);
+	request->release();
+
+	// decref for json object
+	json_decref(__msg_id);
+}
+
+void HttpClientTest::post20()
+{
+	//	post data to http server
+	std::string __string_token = "&token=1234567788";
+	std::string __string_msg = "msg=";
+	json_t* __msg = json_object();
+	json_t* __msg_id = json_integer(/*TYPE_RANDOM_PRIZE*/20);
+	json_t* __flow_id = json_integer(88888888);
+	json_t* __msg_channel = json_string("000023");
+	json_t* __msg_version = json_string("2.2.0");
+	json_t* __single_gacha = json_string("false");
+	json_t* __msg_device_guid = json_string(__device_guid.c_str());
+	json_object_set(__msg, "msg_id", __msg_id);
+	json_object_set(__msg, "flowid", __flow_id);
+	json_object_set(__msg, "channel", __msg_channel);
+	json_object_set(__msg, "version", __msg_version);
+	json_object_set(__msg, "player_guid", __msg_device_guid);
+	json_object_set(__msg, "single_gacha", __single_gacha);
+	HttpRequest* request = new HttpRequest();
+	request->setUrl(HTTP_URL);
+	request->setRequestType(HttpRequest::Type::POST);
+	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
+
+	// write the post data
+	const char* postData = json_dumps(__msg,0);
+	if(postData)
+	{
+		__string_msg  += postData;
+		__string_msg += __string_token;
+		request->setRequestData(__string_msg.c_str(), __string_msg.length());
+	}
+	request->setTag("POST test20\n");
+	HttpClient::getInstance()->send(request);
+	request->release();
+
+	// decref for json object
+	json_decref(__msg_id);
+}
+
+void HttpClientTest::post21()
+{
+	//	post data to http server
+	std::string __string_token = "&token=1234567788";
+	std::string __string_msg = "msg=";
+	json_t* __msg = json_object();
+	json_t* __msg_id = json_integer(/*TYPE_VERSION_UPDATE*/21);
+	json_t* __flow_id = json_integer(88888888);
+	json_t* __msg_channel = json_string("000023");
+	json_t* __msg_version = json_string("2.2.0");
+	json_object_set(__msg, "msg_id", __msg_id);
+	json_object_set(__msg, "flowid", __flow_id);
+	json_object_set(__msg, "channel", __msg_channel);
+	json_object_set(__msg, "version", __msg_version);
+
+	HttpRequest* request = new HttpRequest();
+	request->setUrl(HTTP_URL);
+	request->setRequestType(HttpRequest::Type::POST);
+	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
+
+	// write the post data
+	const char* postData = json_dumps(__msg,0);
+	if(postData)
+	{
+		__string_msg  += postData;
+		__string_msg += __string_token;
+		request->setRequestData(__string_msg.c_str(), __string_msg.length());
+	}
+	request->setTag("POST post21\n");
+	HttpClient::getInstance()->send(request);
+	request->release();
+
+	// decref for json object
+	json_decref(__msg_id);
+}
+
+void HttpClientTest::post22()
+{
+	//	post data to http server
+	std::string __string_token = "&token=1234567788";
+	std::string __string_msg = "msg=";
+	json_t* __msg = json_object();
+	json_t* __msg_id = json_integer(/*TYPE_RANK_INFO_FOR_PVP*/22);
+	json_t* __flow_id = json_integer(88888888);
+	json_t* __msg_channel = json_string("000023");
+	json_t* __msg_version = json_string("2.2.0");
+	json_t* __msg_device_guid = json_string(__device_guid.c_str());
+
+#define __SET
+
+#if defined __SET
+	json_t* __msg_type = json_string("set");
+#elif defined __GET
+	json_t* __msg_type = json_string("get");
+#elif defined __UPDATE
+	json_t* __msg_type = json_string("update");
+#endif
+	json_t* __msg_area = json_string("Beijing2");
+	json_t* __msg_phone_number = json_string("1851");
+	std::string __nick_name("屏蔽卡不死你");
+	__nick_name = _UnicodeToUTF8(_AnsiToUnicode(__nick_name));
+	json_t* __msg_nickname = json_string(__nick_name.c_str());
+
+	json_object_set(__msg, "msg_id", __msg_id);
+	json_object_set(__msg, "flowid", __flow_id);
+	json_object_set(__msg, "channel", __msg_channel);
+	json_object_set(__msg, "version", __msg_version);
+	json_object_set(__msg, "deviceid", __msg_device_guid);
+	json_object_set(__msg, "type", __msg_type);
+#if defined __SET
+	json_object_set(__msg, "nickname", __msg_nickname);
+	json_object_set(__msg, "area", __msg_area);
+	json_object_set(__msg, "phone_number", __msg_phone_number);
+#elif defined __GET
+#elif defined __UPDATE
+	json_object_set(__msg, "area", __msg_area);
+	json_object_set(__msg, "phone_number", __msg_phone_number);
+#endif
+
+	HttpRequest* request = new HttpRequest();
+	request->setUrl(HTTP_URL);
+	request->setRequestType(HttpRequest::Type::POST);
+	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
+
+	// write the post data
+	const char* postData = json_dumps(__msg,0);
+	if(postData)
+	{
+		__string_msg  += postData;
+		__string_msg += __string_token;
+		request->setRequestData(__string_msg.c_str(), __string_msg.length());
+	}
+	request->setTag("POST post22\n");
+	HttpClient::getInstance()->send(request);
+	request->release();
+
+	// decref for json object
+	json_decref(__msg_id);
+}
+
+void HttpClientTest::post23()
+{
+	//	post data to http server
+	std::string __string_token = "&token=1234567788";
+	std::string __string_msg = "msg=";
+	json_t* __msg = json_object();
+	json_t* __msg_id = json_integer(/*TYPE_GET_RIVAL_FOR_PVP*/23);
+	json_t* __flow_id = json_integer(88888888);
+	json_t* __msg_channel = json_string("000023");
+	json_t* __msg_version = json_string("2.3.0");
+	json_t* __msg_device_guid = json_string(__device_guid.c_str());
+	json_t* __msg_strength = json_integer(450);
+
+	json_object_set(__msg, "msg_id", __msg_id);
+	json_object_set(__msg, "flowid", __flow_id);
+	json_object_set(__msg, "channel", __msg_channel);
+	json_object_set(__msg, "version", __msg_version);
+	json_object_set(__msg, "deviceid", __msg_device_guid);
+	json_object_set(__msg, "strength", __msg_strength);
+
+
+	HttpRequest* request = new HttpRequest();
+	request->setUrl(HTTP_URL);
+	request->setRequestType(HttpRequest::Type::POST);
+	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
+
+	// write the post data
+	const char* postData = json_dumps(__msg,0);
+	if(postData)
+	{
+		__string_msg  += postData;
+		__string_msg += __string_token;
+		request->setRequestData(__string_msg.c_str(), __string_msg.length());
+	}
+	request->setTag("POST post23\n");
+	HttpClient::getInstance()->send(request);
+	request->release();
+
+	// decref for json object
+	json_decref(__msg_id);
+}
+
+void HttpClientTest::post24()
+{
+	//	post data to http server
+	std::string __string_token = "&token=1234567788";
+	std::string __string_msg = "msg=";
+	json_t* __msg = json_object();
+	json_t* __msg_id = json_integer(/*TYPE_UPLOAD_SCORE_FOR_PVP*/24);
+	json_t* __flow_id = json_integer(88888888);
+	json_t* __msg_channel = json_string("000023");
+	json_t* __msg_version = json_string("2.3.0");
+	json_t* __msg_device_guid = json_string(__device_guid.c_str());
+	json_t* __msg_car = json_integer(3);
+	json_t* __msg_car_lv = json_integer(1);
+	json_t* __msg_racer = json_integer(1);
+	json_t* __msg_racer_lv = json_integer(1);
+	json_t* __msg_strength = json_integer(200);
+	json_t* __msg_my_rank = json_integer(1);
+	json_t* __msg_win_flag = json_string("true");
+	json_t* __msg_rivals = json_array();
+	for (int __i = 0; __i < 3; ++__i)
+	{
+		json_t* __msg_inner = json_object();
+		json_object_set(__msg_inner, "strength", json_integer((__i + 1)*100));
+		json_object_set(__msg_inner, "rank", json_integer(__i + 1));
+		json_array_append_new(__msg_rivals, __msg_inner);
+	}
+
+	json_object_set(__msg, "msg_id", __msg_id);
+	json_object_set(__msg, "flowid", __flow_id);
+	json_object_set(__msg, "channel", __msg_channel);
+	json_object_set(__msg, "version", __msg_version);
+	json_object_set(__msg, "deviceid", __msg_device_guid);
+	json_object_set(__msg, "car", __msg_car);
+	json_object_set(__msg, "car_lv", __msg_car_lv);
+	json_object_set(__msg, "racer", __msg_racer);
+	json_object_set(__msg, "racer_lv", __msg_racer_lv);
+	json_object_set(__msg, "strength", __msg_strength);
+	json_object_set(__msg, "my_rank", __msg_my_rank);
+	json_object_set(__msg, "win_flag", __msg_win_flag);
+	json_object_set(__msg, "rivals", __msg_rivals);
+	
+
+	HttpRequest* request = new HttpRequest();
+	request->setUrl(HTTP_URL);
+	request->setRequestType(HttpRequest::Type::POST);
+	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
+
+	// write the post data
+	const char* postData = json_dumps(__msg,0);
+	if(postData)
+	{
+		__string_msg  += postData;
+		__string_msg += __string_token;
+		request->setRequestData(__string_msg.c_str(), __string_msg.length());
+	}
+	request->setTag("POST post24\n");
+	HttpClient::getInstance()->send(request);
+	request->release();
+
+	// decref for json object
+	json_decref(__msg_id);
+}
+
+void HttpClientTest::post25()
+{
+	//	post data to http server
+	std::string __string_token = "&token=1234567788";
+	std::string __string_msg = "msg=";
+	json_t* __msg = json_object();
+	json_t* __msg_id = json_integer(/*TYPE_GET_AWARD_FOR_PVP*/25);
+	json_t* __flow_id = json_integer(88888888);
+	json_t* __msg_channel = json_string("000023");
+	json_t* __msg_version = json_string("2.3.0");
+	json_t* __msg_device_guid = json_string(__device_guid.c_str());
+	json_object_set(__msg, "msg_id", __msg_id);
+	json_object_set(__msg, "flowid", __flow_id);
+	json_object_set(__msg, "channel", __msg_channel);
+	json_object_set(__msg, "version", __msg_version);
+	json_object_set(__msg, "deviceid", __msg_device_guid);
+
+	HttpRequest* request = new HttpRequest();
+	request->setUrl(HTTP_URL);
+	request->setRequestType(HttpRequest::Type::POST);
+	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
+
+	// write the post data
+	const char* postData = json_dumps(__msg,0);
+	if(postData)
+	{
+		__string_msg  += postData;
+		__string_msg += __string_token;
+		request->setRequestData(__string_msg.c_str(), __string_msg.length());
+	}
+	request->setTag("POST test25\n");
+	HttpClient::getInstance()->send(request);
+	request->release();
+
+	// decref for json object
+	json_decref(__msg_id);
+}
+
+void HttpClientTest::post26()
+{
+	//	post data to http server
+	std::string __string_token = "&token=1234567788";
+	std::string __string_msg = "msg=";
+	json_t* __msg = json_object();
+	json_t* __msg_id = json_integer(/*TYPE_GET_RANK_PARTIAL_FOR_PVP*/26);
+	json_t* __flow_id = json_integer(88888888);
+	json_t* __msg_channel = json_string("000023");
+	json_t* __msg_version = json_string("2.3.0");
+	json_t* __msg_device_guid = json_string(__device_guid.c_str());
+	json_object_set(__msg, "msg_id", __msg_id);
+	json_object_set(__msg, "flowid", __flow_id);
+	json_object_set(__msg, "channel", __msg_channel);
+	json_object_set(__msg, "version", __msg_version);
+	json_object_set(__msg, "deviceid", __msg_device_guid);
+
+	HttpRequest* request = new HttpRequest();
+	request->setUrl(HTTP_URL);
+	request->setRequestType(HttpRequest::Type::POST);
+	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
+
+	// write the post data
+	const char* postData = json_dumps(__msg,0);
+	if(postData)
+	{
+		__string_msg  += postData;
+		__string_msg += __string_token;
+		request->setRequestData(__string_msg.c_str(), __string_msg.length());
+	}
+	request->setTag("POST test26\n");
+	HttpClient::getInstance()->send(request);
+	request->release();
+
+	// decref for json object
+	json_decref(__msg_id);
+}
+
+void HttpClientTest::post27()
+{
+	//	post data to http server
+	std::string __string_token = "&token=1234567788";
+	std::string __string_msg = "msg=";
+	json_t* __msg = json_object();
+	json_t* __msg_id = json_integer(/*TYPE_RANDOM_PRIZE_THE_THIRD_PHASE*/27);
+	json_t* __flow_id = json_integer(88888888);
+	json_t* __msg_channel = json_string("000023");
+	json_t* __msg_version = json_string("2.3.0");
+	json_t* __single_gacha = json_string("false");
+	json_t* __msg_device_guid = json_string(__device_guid.c_str());
+	json_object_set(__msg, "msg_id", __msg_id);
+	json_object_set(__msg, "flowid", __flow_id);
+	json_object_set(__msg, "channel", __msg_channel);
+	json_object_set(__msg, "version", __msg_version);
+	json_object_set(__msg, "player_guid", __msg_device_guid);
+	json_object_set(__msg, "single_gacha", __single_gacha);
+	HttpRequest* request = new HttpRequest();
+	request->setUrl(HTTP_URL);
+	request->setRequestType(HttpRequest::Type::POST);
+	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
+
+	// write the post data
+	const char* postData = json_dumps(__msg,0);
+	if(postData)
+	{
+		__string_msg  += postData;
+		__string_msg += __string_token;
+		request->setRequestData(__string_msg.c_str(), __string_msg.length());
+	}
+	request->setTag("POST test27\n");
+	HttpClient::getInstance()->send(request);
+	request->release();
+
+	// decref for json object
+	json_decref(__msg_id);
+}
+
+
+void HttpClientTest::post28()
+{
+	//	post data to http server
+	std::string __string_token = "&token=1234567788";
+	std::string __string_msg = "msg=";
+	json_t* __msg = json_object();
+	json_t* __msg_id = json_integer(/*TYPE_UPDATE_PHONE_FOR_RANDOM_PRIZE_THE_THIRD_PHASE*/28);
+	json_t* __flow_id = json_integer(88888888);
+	json_t* __msg_channel = json_string("000023");
+	json_t* __msg_version = json_string("2.3.0");
+	json_t* __phone_number = json_string("18510384228");
+	json_t* __msg_device_guid = json_string(__device_guid.c_str());
+	json_object_set(__msg, "msg_id", __msg_id);
+	json_object_set(__msg, "flowid", __flow_id);
+	json_object_set(__msg, "channel", __msg_channel);
+	json_object_set(__msg, "version", __msg_version);
+	json_object_set(__msg, "deviceid", __msg_device_guid);
+	json_object_set(__msg, "phone_number", __phone_number);
+	HttpRequest* request = new HttpRequest();
+	request->setUrl(HTTP_URL);
+	request->setRequestType(HttpRequest::Type::POST);
+	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
+
+	// write the post data
+	const char* postData = json_dumps(__msg,0);
+	if(postData)
+	{
+		__string_msg  += postData;
+		__string_msg += __string_token;
+		request->setRequestData(__string_msg.c_str(), __string_msg.length());
+	}
+	request->setTag("POST test28\n");
+	HttpClient::getInstance()->send(request);
+	request->release();
+
+	// decref for json object
+	json_decref(__msg_id);
+}
+
+void HttpClientTest::post29()
+{
+	//	post data to http server
+	std::string __string_token = "&token=1234567788";
+	std::string __string_msg = "msg=";
+	json_t* __msg = json_object();
+	json_t* __msg_id = json_integer(/*TYPE_ADD_SCORE_FOR_DEBUG_PVP*/29);
+	json_t* __flow_id = json_integer(88888888);
+	json_t* __msg_channel = json_string("000023");
+	json_t* __msg_version = json_string("2.3.0");
+	json_t* __add_score = json_integer(1000);
+	json_t* __msg_device_guid = json_string(__device_guid.c_str());
+	json_object_set(__msg, "msg_id", __msg_id);
+	json_object_set(__msg, "flowid", __flow_id);
+	json_object_set(__msg, "channel", __msg_channel);
+	json_object_set(__msg, "version", __msg_version);
+	json_object_set(__msg, "deviceid", __msg_device_guid);
+	json_object_set(__msg, "add_score", __add_score);
+	HttpRequest* request = new HttpRequest();
+	request->setUrl(HTTP_URL);
+	request->setRequestType(HttpRequest::Type::POST);
+	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
+
+	// write the post data
+	const char* postData = json_dumps(__msg,0);
+	if(postData)
+	{
+		__string_msg  += postData;
+		__string_msg += __string_token;
+		request->setRequestData(__string_msg.c_str(), __string_msg.length());
+	}
+	request->setTag("POST post29\n");
 	HttpClient::getInstance()->send(request);
 	request->release();
 
@@ -836,11 +1330,31 @@ void HttpClientTest::test_voice_query(const char* __query)
 	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
 
 	// write the post data
-	std::string __str_msg = "uid=3&version=1&voice_content=";
+	std::string __str_msg = "uid=1988&version=1&year=2015&month=0&date=25&voice_content=";
 	__str_msg += __query;
 	__str_msg = _UnicodeToUTF8(_AnsiToUnicode(__str_msg));
 	request->setRequestData((const char*)__str_msg.c_str(), __str_msg.length());
 	request->setTag("POST test_voice_query\n");
+	HttpClient::getInstance()->send(request);
+	request->release();
+}
+
+void HttpClientTest::test_voice_query_f_wechat(const char* __query)
+{
+	//	post data to http server
+	HttpRequest* request = new HttpRequest();
+	std::string __url = HTTP_URL2;
+	__url += "voice_query_4_wechat";
+	request->setUrl(__url.c_str());
+	request->setRequestType(HttpRequest::Type::POST);
+	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
+
+	// write the post data
+	std::string __str_msg = "openid=yushsjsiskloiuytrq25swqsdieyskwq&voice_content=";
+	__str_msg += __query;
+	__str_msg = _UnicodeToUTF8(_AnsiToUnicode(__str_msg));
+	request->setRequestData((const char*)__str_msg.c_str(), __str_msg.length());
+	request->setTag("POST test_voice_query_f_wechat\n");
 	HttpClient::getInstance()->send(request);
 	request->release();
 }
@@ -856,10 +1370,29 @@ void HttpClientTest::test_get_user_info()
 	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
 
 	// write the post data
-	std::string __str_msg = "uid=1525&sex=1&v=1&type=0";
+	std::string __str_msg = "uid=27&sex=1&v=1&type=0";
 	__str_msg = _UnicodeToUTF8(_AnsiToUnicode(__str_msg));
 	request->setRequestData((const char*)__str_msg.c_str(), __str_msg.length());
 	request->setTag("POST test_get_user_info\n");
+	HttpClient::getInstance()->send(request);
+	request->release();
+}
+
+void HttpClientTest::test_set_device_token()
+{
+	//	post data to http server
+	HttpRequest* request = new HttpRequest();
+	std::string __url = HTTP_URL2;
+	__url += "deviceid";
+	request->setUrl(__url.c_str());
+	request->setRequestType(HttpRequest::Type::POST);
+	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
+
+	// write the post data
+	std::string __str_msg = "uid=1525&token=bc64578b96efdee682b1dab5a58008d86e951f1fddc3d89cc0646fdcfcab63f8&os=0";
+	__str_msg = _UnicodeToUTF8(_AnsiToUnicode(__str_msg));
+	request->setRequestData((const char*)__str_msg.c_str(), __str_msg.length());
+	request->setTag("POST test_set_device_token\n");
 	HttpClient::getInstance()->send(request);
 	request->release();
 }
@@ -879,6 +1412,101 @@ void HttpClientTest::test_set_colour()
 	__str_msg = _UnicodeToUTF8(_AnsiToUnicode(__str_msg));
 	request->setRequestData((const char*)__str_msg.c_str(), __str_msg.length());
 	request->setTag("POST test_set_colour\n");
+	HttpClient::getInstance()->send(request);
+	request->release();
+}
+
+void HttpClientTest::test_get_colour()
+{
+	//	post data to http server
+	HttpRequest* request = new HttpRequest();
+	std::string __url = HTTP_URL2;
+	__url += "get_colour";
+	request->setUrl(__url.c_str());
+	request->setRequestType(HttpRequest::Type::POST);
+	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
+
+	// write the post data
+	std::string __str_msg = "uid=1525";
+	__str_msg = _UnicodeToUTF8(_AnsiToUnicode(__str_msg));
+	request->setRequestData((const char*)__str_msg.c_str(), __str_msg.length());
+	request->setTag("POST test_get_colour\n");
+	HttpClient::getInstance()->send(request);
+	request->release();
+}
+
+void HttpClientTest::test_get_energy()
+{
+	//	post data to http server
+	HttpRequest* request = new HttpRequest();
+	std::string __url = HTTP_URL2;
+	__url += "get_energy";
+	request->setUrl(__url.c_str());
+	request->setRequestType(HttpRequest::Type::POST);
+	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
+
+	// write the post data
+	std::string __str_msg = "uid=1525";
+	__str_msg = _UnicodeToUTF8(_AnsiToUnicode(__str_msg));
+	request->setRequestData((const char*)__str_msg.c_str(), __str_msg.length());
+	request->setTag("POST test_get_energy\n");
+	HttpClient::getInstance()->send(request);
+	request->release();
+}
+
+void HttpClientTest::test_get_support_question()
+{
+	//	post data to http server
+	HttpRequest* request = new HttpRequest();
+	std::string __url = HTTP_URL2;
+	__url += "get_support_question";
+	request->setUrl(__url.c_str());
+	request->setRequestType(HttpRequest::Type::POST);
+	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
+
+	// write the post data
+	std::string __str_msg = "";
+	__str_msg = _UnicodeToUTF8(_AnsiToUnicode(__str_msg));
+	request->setRequestData((const char*)__str_msg.c_str(), __str_msg.length());
+	request->setTag("POST test_get_support_question\n");
+	HttpClient::getInstance()->send(request);
+	request->release();
+}
+
+void HttpClientTest::test_give_away_bless()
+{
+	//	post data to http server
+	HttpRequest* request = new HttpRequest();
+	std::string __url = HTTP_URL2;
+	__url += "give_away_bless";
+	request->setUrl(__url.c_str());
+	request->setRequestType(HttpRequest::Type::POST);
+	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
+
+	// write the post data
+	std::string __str_msg = "uid=1525&name=lee&target_uid=3&bless=20";
+	__str_msg = _UnicodeToUTF8(_AnsiToUnicode(__str_msg));
+	request->setRequestData((const char*)__str_msg.c_str(), __str_msg.length());
+	request->setTag("POST test_give_away_bless\n");
+	HttpClient::getInstance()->send(request);
+	request->release();
+}
+
+void HttpClientTest::test_get_bless()
+{
+	//	post data to http server
+	HttpRequest* request = new HttpRequest();
+	std::string __url = HTTP_URL2;
+	__url += "get_bless";
+	request->setUrl(__url.c_str());
+	request->setRequestType(HttpRequest::Type::POST);
+	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
+
+	// write the post data
+	std::string __str_msg = "uid=3";
+	__str_msg = _UnicodeToUTF8(_AnsiToUnicode(__str_msg));
+	request->setRequestData((const char*)__str_msg.c_str(), __str_msg.length());
+	request->setTag("POST test_get_bless\n");
 	HttpClient::getInstance()->send(request);
 	request->release();
 }
@@ -959,6 +1587,25 @@ void HttpClientTest::test_modify_info()
 	request->release();
 }
 
+void HttpClientTest::test_modify_info_4_wechat()
+{
+	//	post data to http server
+	HttpRequest* request = new HttpRequest();
+	std::string __url = HTTP_URL2;
+	__url += "modify_info_4_wechat";
+	request->setUrl(__url.c_str());
+	request->setRequestType(HttpRequest::Type::POST);
+	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
+
+	// write the post data
+	std::string __str_msg = "openid=1dd23&name=King Lee1&pass=164271579&bd=1983040404&sex=1&ba=9";
+	__str_msg = _UnicodeToUTF8(_AnsiToUnicode(__str_msg));
+	request->setRequestData((const char*)__str_msg.c_str(), __str_msg.length());
+	request->setTag("POST test_modify_info_4_wechat\n");
+	HttpClient::getInstance()->send(request);
+	request->release();
+}
+
 void HttpClientTest::test_contracts()
 {
 	//	post data to http server
@@ -970,12 +1617,33 @@ void HttpClientTest::test_contracts()
 	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
 
 	// write the post data
-	//std::string __str_msg = "uid=1525&type=get";
-	//std::string __str_msg = "uid=1525&contracts_uid=1123&contracts_name=李希文&type=add";
-	std::string __str_msg = "uid=1525&contracts_uid=1123&type=del";
+	std::string __str_msg = "uid=1525&type=get";
+	//std::string __str_msg = "uid=1525&contracts_uid=1128&contracts_name=李希文&type=add";
+	//std::string __str_msg = "uid=1525&contracts_uid=1123&type=del";
 	__str_msg = _UnicodeToUTF8(_AnsiToUnicode(__str_msg));
 	request->setRequestData((const char*)__str_msg.c_str(), __str_msg.length());
 	request->setTag("POST test_contracts\n");
+	HttpClient::getInstance()->send(request);
+	request->release();
+}
+
+void HttpClientTest::test_attentions()
+{
+	//	post data to http server
+	HttpRequest* request = new HttpRequest();
+	std::string __url = HTTP_URL2;
+	__url += "attentions";
+	request->setUrl(__url.c_str());
+	request->setRequestType(HttpRequest::Type::POST);
+	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
+
+	// write the post data
+	//std::string __str_msg = "uid=1525&type=get";
+	std::string __str_msg = "uid=1525&attention_uid=1128&type=add";
+	//std::string __str_msg = "uid=1525&attention_uid=1123&type=del";
+	__str_msg = _UnicodeToUTF8(_AnsiToUnicode(__str_msg));
+	request->setRequestData((const char*)__str_msg.c_str(), __str_msg.length());
+	request->setTag("POST test_attentions\n");
 	HttpClient::getInstance()->send(request);
 	request->release();
 }
@@ -1010,7 +1678,7 @@ void HttpClientTest::test_select_date()
 	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
 
 	// write the post data
-	std::string __str_msg = "uid=3&select_date_type=2&days_type=1";
+	std::string __str_msg = "uid=3&select_date_type=0&days_type=1";
 	__str_msg = _UnicodeToUTF8(_AnsiToUnicode(__str_msg));
 	request->setRequestData((const char*)__str_msg.c_str(), __str_msg.length());
 	request->setTag("POST test_select_date\n");
@@ -1030,7 +1698,7 @@ void HttpClientTest::test_match()
 
 	// write the post data
 	//std::string __str_msg = "input_type=0&uid=1525&target_uid=1001&type=0";
-	std::string __str_msg = "input_type=1&uid=1525&birthday=1990101010&birthplace=1&sex=0&type=0";
+	std::string __str_msg = "input_type=1&uid=3111&birthday=1990101010&birthplace=1&sex=0&type=0";
 	__str_msg = _UnicodeToUTF8(_AnsiToUnicode(__str_msg));
 	request->setRequestData((const char*)__str_msg.c_str(), __str_msg.length());
 	request->setTag("POST test_match\n");
@@ -1052,7 +1720,7 @@ void HttpClientTest::test_prediction()
 	std::string __str_msg = "uid=1525&xmtype=7&num0=1&num1=1";
 	__str_msg = _UnicodeToUTF8(_AnsiToUnicode(__str_msg));
 	request->setRequestData((const char*)__str_msg.c_str(), __str_msg.length());
-	request->setTag("POST test_match\n");
+	request->setTag("POST test_prediction\n");
 	HttpClient::getInstance()->send(request);
 	request->release();	
 }
@@ -1076,6 +1744,139 @@ void HttpClientTest::test_user_query()
 	request->release();	
 }
 
+void HttpClientTest::test_user_query_4_wechat()
+{
+	//	post data to http server
+	HttpRequest* request = new HttpRequest();
+	std::string __url = HTTP_URL2;
+	__url += "user_query_4_wechat";
+	request->setUrl(__url.c_str());
+	request->setRequestType(HttpRequest::Type::POST);
+	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
+
+	// write the post data
+	std::string __str_msg = "openid=yushsjsiskloiuytrq25swqsdieyskwq";
+	__str_msg = _UnicodeToUTF8(_AnsiToUnicode(__str_msg));
+	request->setRequestData((const char*)__str_msg.c_str(), __str_msg.length());
+	request->setTag("POST test_user_query_4_wechat\n");
+	HttpClient::getInstance()->send(request);
+	request->release();	
+}
+
+void HttpClientTest::test_add_bless()
+{
+	//	post data to http server
+	HttpRequest* request = new HttpRequest();
+	std::string __url = HTTP_URL2;
+	__url += "add_bless";
+	request->setUrl(__url.c_str());
+	request->setRequestType(HttpRequest::Type::POST);
+	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
+
+	// write the post data
+	std::string __str_msg = "uid=1525&bless=15";
+	__str_msg = _UnicodeToUTF8(_AnsiToUnicode(__str_msg));
+	request->setRequestData((const char*)__str_msg.c_str(), __str_msg.length());
+	request->setTag("POST test_add_bless\n");
+	HttpClient::getInstance()->send(request);
+	request->release();	
+}
+
+void HttpClientTest::test_reg_4_wechat()
+{
+	//	post data to http server
+	HttpRequest* request = new HttpRequest();
+	std::string __url = HTTP_URL2;
+	__url += "reg_4_wechat";
+	request->setUrl(__url.c_str());
+	request->setRequestType(HttpRequest::Type::POST);
+	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
+
+	// write the post data
+	std::string __str_msg = "openid=yushsjsiskloiuytrq25swqsdieyskwq";
+	__str_msg = _UnicodeToUTF8(_AnsiToUnicode(__str_msg));
+	request->setRequestData((const char*)__str_msg.c_str(), __str_msg.length());
+	request->setTag("POST test_reg_4_wechat\n");
+	HttpClient::getInstance()->send(request);
+	request->release();	
+}
+
+void HttpClientTest::test_push_4_index()
+{
+		//	post data to http server
+	HttpRequest* request = new HttpRequest();
+	std::string __url = HTTP_URL2;
+	__url += "push_4_index";
+	request->setUrl(__url.c_str());
+	request->setRequestType(HttpRequest::Type::POST);
+	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
+
+	// write the post data
+	std::string __str_msg = "uid=3";
+	__str_msg = _UnicodeToUTF8(_AnsiToUnicode(__str_msg));
+	request->setRequestData((const char*)__str_msg.c_str(), __str_msg.length());
+	request->setTag("POST push_4_index\n");
+	HttpClient::getInstance()->send(request);
+	request->release();	
+}
+
+void HttpClientTest::test_push_4_friend()
+{
+		//	post data to http server
+	HttpRequest* request = new HttpRequest();
+	std::string __url = HTTP_URL2;
+	__url += "push_4_friend";
+	request->setUrl(__url.c_str());
+	request->setRequestType(HttpRequest::Type::POST);
+	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
+
+	// write the post data
+	std::string __str_msg = "uid=3";
+	__str_msg = _UnicodeToUTF8(_AnsiToUnicode(__str_msg));
+	request->setRequestData((const char*)__str_msg.c_str(), __str_msg.length());
+	request->setTag("POST push_4_friend\n");
+	HttpClient::getInstance()->send(request);
+	request->release();	
+}
+
+void HttpClientTest::test_push_4_login()
+{
+		//	post data to http server
+	HttpRequest* request = new HttpRequest();
+	std::string __url = HTTP_URL2;
+	__url += "push_4_login";
+	request->setUrl(__url.c_str());
+	request->setRequestType(HttpRequest::Type::POST);
+	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
+
+	// write the post data
+	std::string __str_msg = "uid=3";
+	__str_msg = _UnicodeToUTF8(_AnsiToUnicode(__str_msg));
+	request->setRequestData((const char*)__str_msg.c_str(), __str_msg.length());
+	request->setTag("POST test_push_4_login\n");
+	HttpClient::getInstance()->send(request);
+	request->release();	
+}
+
+void HttpClientTest::test_get_luck()
+{
+	//	post data to http server
+	HttpRequest* request = new HttpRequest();
+	std::string __url = HTTP_URL2;
+	__url += "get_luck";
+	request->setUrl(__url.c_str());
+	request->setRequestType(HttpRequest::Type::POST);
+	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
+
+	// write the post data
+	std::string __str_msg = "uid=3&year=2015&month=0&date=15";
+	__str_msg = _UnicodeToUTF8(_AnsiToUnicode(__str_msg));
+	request->setRequestData((const char*)__str_msg.c_str(), __str_msg.length());
+	request->setTag("POST test_get_luck\n");
+	HttpClient::getInstance()->send(request);
+	request->release();
+}
+
 void HttpClientTest::test_pay_for_fly_flow()
 {
 	//	post data to http server
@@ -1087,7 +1888,7 @@ void HttpClientTest::test_pay_for_fly_flow()
 	request->setResponseCallback(this, httpresponse_selector(HttpClientTest::onHttpRequestCompleted));
 
 	// write the post data
-	std::string __str_msg = "florderid=111111&orderid=222222&productid=100001&cardno=00000&amount=100&amountunit=NT$&ret=1&cardstatus=0&merpriv=000&verifystring=aaaaaaaaaaa";
+	std::string __str_msg = "";
 	request->setRequestData((const char*)__str_msg.c_str(), __str_msg.length());
 	request->setTag("POST test_pay_for_fly_flow\n");
 	HttpClient::getInstance()->send(request);
@@ -1119,15 +1920,39 @@ int _tmain(int argc, _TCHAR* argv[])
 	{
 		if(0)
 		{
+			//__test->test_voice_query("今日情感如何");
 			//__test->test_participle();
+			//__test->test_voice_query("我今天财富如何");
+			//__test->test_voice_query("我本月桃花如何");
+			//__test->test_voice_query("我今日能量如何");
+			//__test->test_voice_query("我先天助运如何");
+			//__test->test_voice_query("我的财运如何");
+			//__test->test_voice_query("我今日约会如何");
+			//__test->test_voice_query("过去我十年运程如何");
+			//__test->test_voice_query("我此时财运如何");
+			//__test->test_voice_query("我今日身体如何");
+			//__test->test_voice_query("我人生忠告");
+			//__test->test_voice_query("我的主要性格特点");
+			//__test->test_voice_query("我的主要不足");
+			//__test->test_voice_query("我的的次要性格特点");
+			//__test->test_voice_query("我的其它不足");
 			/*
+			__test->test_voice_query("我先天能量如何");
+			__test->test_voice_query("我这辈子福报如何");
+			__test->test_voice_query("我先天财富如何");
+
+			__test->test_voice_query("我先天桃花如何");
+
+			__test->test_voice_query("过去我十年运程如何");
+
+			__test->test_voice_query("先天情感如何");
+			
+			__test->test_voice_query("我的海拔高度");
 			__test->test_voice_query("今日运程如何");
 			__test->test_voice_query("本月运程如何");
 			__test->test_voice_query("今年运程如何");
-			__test->test_voice_query("我今年能量如何");
 			
 			__test->test_voice_query("我本月做事如何");
-			
 			__test->test_voice_query("我今天去旅行如何");
 			__test->test_voice_query("我今日健康如何");
 			__test->test_voice_query("我今日财富如何");
@@ -1141,20 +1966,35 @@ int _tmain(int argc, _TCHAR* argv[])
 			__test->test_voice_query("我今日感情变化如何");
 			__test->test_voice_query("我今日桃花如何");
 			__test->test_voice_query("我今日追求好么");
-			__test->test_voice_query("我这天那个方向最顺?");
 			__test->test_voice_query("问点什么好呢?");
+			__test->test_voice_query("我这天那个方向最顺?");
 			*/
-			
+			//__test->test_voice_query_f_wechat("我的财运如何");
 			//__test->test_get_user_info();
+			//__test->test_set_device_token();
 			//__test->test_set_colour();
+			//__test->test_get_colour();
+			//__test->test_get_energy();
+			//__test->test_get_support_question();
+			//__test->test_give_away_bless();
+			//__test->test_get_bless();
 			//__test->test_modify_info();
+			//__test->test_modify_info_4_wechat();
 			//__test->test_feedback();
 			//__test->test_contracts();
+			//__test->test_attentions();
 			//__test->test_compass();
 			//__test->test_select_date();
 			//__test->test_match();
 			//__test->test_prediction();
-			__test->test_user_query();
+			//__test->test_user_query();
+			//__test->test_user_query_4_wechat();
+			//__test->test_add_bless();
+			//__test->test_reg_4_wechat();
+			//__test->test_push_4_index();
+			//__test->test_push_4_friend();
+			//__test->test_push_4_login();
+			//__test->test_get_luck();
 			//__test->test_express_register();
 			//__test->test_express_login();
 			//__test->post1();
@@ -1164,32 +2004,49 @@ int _tmain(int argc, _TCHAR* argv[])
 		}
 		else
 		{
-			
-			
-			//__test->post3();
-			__test->post4();
-			__test->post5(5);
-			__test->post6();
-			__test->post7();
-			__test->post8();
-			__test->post13();
-			
-			if (0)
+			int __loops = 1;
+			for (int __i = 0; __i < __loops; ++__i)
 			{
-				//__test->post9();
-			}
-			else
-			{
-				//__test->test_pay_for_fly_flow();
-				//__test->test_pay_for_fly_flow_verify();
-			}
+
+				//	mail
+				//__test->post4();
 			
-			__test->post15();
-			__test->post16();
-			__test->post17();
-			__test->post18();
-			__test->post19();
-			
+				__test->post3();
+				__test->post5();
+				__test->post6();
+				__test->post7();
+				__test->post8();
+				__test->post13();
+				
+				if (0)
+				{
+					//__test->post9();
+				}
+				else
+				{
+					//__test->test_pay_for_fly_flow();
+					//__test->test_pay_for_fly_flow_verify();
+				}
+
+				__test->post15();
+				__test->post16();
+				__test->post17();
+				__test->post18();
+				__test->post19();
+
+				__test->post20();
+				__test->post21();
+				
+				//	for pvp
+				__test->post22();
+				//__test->post23();
+				//__test->post24();
+				//__test->post25();
+				//__test->post26();
+				//__test->post27();
+				//__test->post28();
+				//__test->post29();
+			}
 		}
 
 	}
